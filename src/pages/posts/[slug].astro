@@ -119,8 +119,8 @@ const headings = blocks.filter((b: interfaces.Block) =>
     </div>
   </div>
 
-  <div client:load slot="aside" class={styles.aside} id="aside_contents_table">
-    <div id="table_of_contents_of_aside"><TableOfContentsOfAside headings={headings}/></div>
+  <div client: slot="aside" class={styles.aside} id="aside_navigation">
+    <div id="table_of_contents"><TableOfContentsOfAside headings={headings}/></div>
     <BlogPostsLink
       heading="Posts in the same category"
       posts={postsHavingSameTag.filter(
@@ -134,54 +134,68 @@ const headings = blocks.filter((b: interfaces.Block) =>
 </Layout>
 
 <script>
-  const aside_contents_table = document.getElementById('aside_contents_table');
-  let offsetTop = aside_contents_table.offsetTop;
+  const aside_navigation = document.getElementById('aside_navigation');
+  let offsetTop = aside_navigation.offsetTop;
 
-  window.addEventListener('resize', () => { // 幅変更時にオフセットを更新する。
-    offsetTop = aside_contents_table.offsetTop;
 
+  function updateContentsTable(){
+    if( aside_navigation.offsetTop != 0)offsetTop = aside_navigation.offsetTop;
     if (window.scrollY >= offsetTop) {
-      aside_contents_table.classList.add('fixed');
+      aside_navigation.classList.add('fixed');
     } else {
-      aside_contents_table.classList.remove('fixed');
+      aside_navigation.classList.remove('fixed');
     }
+  }
+  updateContentsTable();
+
+  // 画面サイズとスクロールイベントが発生した時に、コンテンツテーブルを更新する。
+  ['resize', 'scroll'].forEach((eventType) =>{
+    window.addEventListener(eventType, () => {
+      updateContentsTable();
+    })
   })
 
-  window.addEventListener('scroll', () => {
-    if (window.scrollY >= offsetTop) {
-      aside_contents_table.classList.add('fixed');
-    } else {
-      aside_contents_table.classList.remove('fixed');
-    }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        window.dispatchEvent(new CustomEvent('headingChange', { detail: id }));
+      }
+    });
+  }, {
+    rootMargin: '0px 0px -80% 0px', // 上部に来たときに発火
+  });
+
+  document.querySelectorAll('h3,h4,h5').forEach(el => {
+    observer.observe(el);
   });
 </script>
 
 <style>
-  #aside_contents_table {
+  #table_of_contents{
+  }
+  @media (max-width: 640px) {
+    #table_of_contents{
+      display: none;
+    }
+  }
+
+  #aside_navigation {
     position: relative;
     top: 0;
     transition: all 0.3s ease;
   }
-
-  #aside_contents_table.fixed {
+  #aside_navigation.fixed {
     position: fixed;
     right: 20px; /* 右側の余白を手動で指定 */
     top: 0px; /* ヘッダーの高さ */
     width: 260px; /* Layout.astroでasideの幅が300px、左右パディングが20pxずつある為、300 - 20 - 20 = */
   }
   @media (max-width: 640px) {
-    #aside_contents_table.fixed {       
+    #aside_navigation.fixed {       
       position: relative;
       top: 0;
       transition: all 0.3s ease;
-    }
-  }
-
-  #table_of_contents_of_aside{
-  }
-  @media (max-width: 640px) {
-    #table_of_contents_of_aside{
-      display: none;
     }
   }
 </style>
