@@ -27,16 +27,63 @@ const { headings } = Astro.props
       return (
         <a
           href={`#${buildHeadingId(heading)}`}
-          class={`table-of-contents-aside ${indentClass}`}
-        >
+          class={`table-of-content-aside ${indentClass}`}>
           {heading.RichTexts.map(
             (richText: interfaces.RichText) => richText.PlainText
-          ).join('')}
+          ).join('').trim()}
         </a>
       )
     })
   }
 </div>
+
+<script>
+  var focusedElement : Element; //現在フォーカス中の項目
+  function switchFocusedElement(nextElem : Element){
+    if(focusedElement != null)focusedElement.style.fontWeight = 'normal';
+    focusedElement = nextElem;
+    focusedElement.style.fontWeight = 'bold';
+  }
+
+  // 目次一覧を取得
+  const elements = document.getElementsByClassName("table-of-content-aside");
+  for(const element of elements){
+    element.addEventListener('click', () => {
+        switchFocusedElement(element)
+    });
+
+    // 一番最初のタグを初期位置に設定する。
+    if(focusedElement == null){
+      switchFocusedElement(element);
+    }
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    // 現在、画面にあるHタグのテキストを取得する。
+    var headingText = null;
+    for(const tmpEntry of entries){
+      if(tmpEntry.isIntersecting) {
+        headingText = tmpEntry.target.innerHTML;
+        break;
+      }
+    }
+
+    if(headingText != null){
+      for(const element of elements){
+        if( element.innerHTML.trim() === headingText.trim() ){
+          // ボタンの強調を切り替える
+          switchFocusedElement(element)
+        }
+      }
+    }
+  }, {
+    rootMargin: '0px 0px -100% 0px', // 上部に来たときに発火
+  });
+
+  document.querySelectorAll('h3,h4,h5').forEach(el => {
+    observer.observe(el);
+  });
+</script>
 
 <style>
   .table-of-contents-aside {

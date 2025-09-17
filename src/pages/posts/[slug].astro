@@ -139,7 +139,6 @@ const headings = blocks.filter((b: interfaces.Block) =>
   const aside_navigation = document.getElementById('aside_navigation');
   let offsetTop = aside_navigation.offsetTop;
 
-
   function updateContentsTable(){
     if( aside_navigation.offsetTop != 0)offsetTop = aside_navigation.offsetTop;
     if (window.scrollY >= offsetTop) {
@@ -156,21 +155,6 @@ const headings = blocks.filter((b: interfaces.Block) =>
       updateContentsTable();
     })
   })
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        window.dispatchEvent(new CustomEvent('headingChange', { detail: id }));
-      }
-    });
-  }, {
-    rootMargin: '0px 0px -80% 0px', // 上部に来たときに発火
-  });
-
-  document.querySelectorAll('h3,h4,h5').forEach(el => {
-    observer.observe(el);
-  });
 </script>
 
 <style>
