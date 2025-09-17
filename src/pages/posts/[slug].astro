@@ -127,8 +127,10 @@ const headings = blocks.filter((b: interfaces.Block) =>
         (p: interfaces.Post) => p.Slug !== post.Slug
       )}
     />
+<!--
     <BlogPostsLink heading="Recommended" posts={rankedPosts} />
     <BlogPostsLink heading="Latest posts" posts={recentPosts} />
+-->
     <BlogTagsLink heading="Categories" tags={tags} />
   </div>
 </Layout>
