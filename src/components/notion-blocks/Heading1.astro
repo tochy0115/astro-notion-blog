@@ -3,6 +3,7 @@ import * as interfaces from '../../lib/interfaces.ts'
 import { buildHeadingId } from '../../lib/blog-helpers.ts'
 import RichText from './RichText.astro'
 import NotionBlocks from '../NotionBlocks.astro'
+import Divider from './Divider.astro'
 
 export interface Props {
   block: interfaces.Block
@@ -40,12 +41,13 @@ const id = buildHeadingId(block.Heading1)
         ))}
       </h3>
     </a>
+    <Divider/>
   )
 }
 
 <style>
   h3 {
-    margin: 1.1em 0 0.3em;
+    margin: 3.0em 0 0.5em;
     color: var(--fg);
     font-size: 1.8rem;
   }
