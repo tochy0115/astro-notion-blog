@@ -68,11 +68,13 @@ const { headings } = Astro.props
       }
     }
 
+    // 目次を構成する要素と、すべて比較。一致したら強調表示を切り替えて終了。
     if(headingText != null){
       for(const element of elements){
         if( element.innerHTML.trim() === headingText.trim() ){
           // ボタンの強調を切り替える
           switchFocusedElement(element)
+          return;
         }
       }
     }
