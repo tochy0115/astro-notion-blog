@@ -59,7 +59,7 @@ const { headings } = Astro.props
   }
 
   const observer = new IntersectionObserver((entries) => {
-    // 現在、画面にあるHタグのテキストを取得する。
+    // イベントを起こしたテキストを取得する。
     var headingText = null;
     for(var tmpEntry of entries){
       if(tmpEntry.isIntersecting) {
