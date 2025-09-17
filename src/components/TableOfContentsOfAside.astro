@@ -38,26 +38,69 @@ const { headings } = Astro.props
 </div>
 
 <script>
-  var focusedElement : Element; //現在フォーカス中の項目
+  // 記事内のHeader一覧
+  const headerElements = document.querySelectorAll('h3,h4,h5');
+  // 表示中Headerの基準Y座標
+  const baseTopY = window.innerHeight * 0.2;
+  // フォーカス位置の初期化
+  function initFocusedElement(){
+    let tmpHeaderElement = null;
+    for(const headerElement of headerElements){
+      // 一番最初のタグを初期位置に設定する。
+      if(tmpHeaderElement == null){
+        tmpHeaderElement = headerElement;
+      }else{
+        // ２つの要素のY座標取得
+        let tmpHeadlerTopY = tmpHeaderElement.getBoundingClientRect().top - baseTopY;
+        let headerTopY = headerElement.getBoundingClientRect().top - baseTopY;
+        // 基準座標に近い要素を選択する
+        tmpHeaderElement = Math.abs(tmpHeadlerTopY) < Math.abs(headerTopY) ? tmpHeaderElement : headerElement;
+      }
+    }
+
+    if( tmpHeaderElement != null){
+      // <b>や<i>などのタグに、テキストが囲われている場合は、最下要素まで移動する
+      while( tmpHeaderElement.childElementCount > 0){  
+        tmpHeaderElement = tmpHeaderElement.children[0];
+      }
+
+      // 目次を構成する要素からフォーカスする要素を探し、フォーカスを切り替える。
+      const headingText = tmpHeaderElement.innerHTML;
+      if(headingText != null){
+        for(const element of elements){
+          if( element.innerHTML.trim() === headingText.trim() ){
+            switchFocusedElement(element);
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  var focusedElement : Element; 
+  //フォーカスの切り替え
   function switchFocusedElement(nextElem : Element){
     if(focusedElement != null)focusedElement.style.fontWeight = 'normal';
     focusedElement = nextElem;
     focusedElement.style.fontWeight = 'bold';
   }
 
-  // 目次一覧を取得
+    // 目次一覧を取得
   const elements = document.getElementsByClassName("table-of-content-aside");
-  for(const element of elements){
-    element.addEventListener('click', () => {
-        switchFocusedElement(element)
+  function initEventListener(){
+    // IntersectionObserverに記事ヘッダーを登録
+    headerElements.forEach(elem => {
+      observer.observe(elem);
     });
 
-    // 一番最初のタグを初期位置に設定する。
-    if(focusedElement == null){
-      switchFocusedElement(element);
+    for(const element of elements){
+      element.addEventListener('click', () => {
+          switchFocusedElement(element)
+      });
     }
   }
 
+  // IntersectionObserver作成
   const observer = new IntersectionObserver((entries) => {
     // イベントを起こしたテキストを取得する。
     var headingText = null;
@@ -89,9 +132,9 @@ const { headings } = Astro.props
     rootMargin: '0px 0px -100% 0px', // 上部に来たときに発火
   });
 
-  document.querySelectorAll('h3,h4,h5').forEach(el => {
-    observer.observe(el);
-  });
+  // 初期化
+  initEventListener();
+  initFocusedElement();
 </script>
 
 <style>
