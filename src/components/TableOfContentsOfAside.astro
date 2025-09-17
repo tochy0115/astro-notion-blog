@@ -61,9 +61,16 @@ const { headings } = Astro.props
   const observer = new IntersectionObserver((entries) => {
     // 現在、画面にあるHタグのテキストを取得する。
     var headingText = null;
-    for(const tmpEntry of entries){
+    for(var tmpEntry of entries){
       if(tmpEntry.isIntersecting) {
-        headingText = tmpEntry.target.innerHTML;
+        var element = tmpEntry.target;
+
+        while( element.childElementCount > 0){
+          // <b>や<i>などのタグに、テキストが囲われている場合は、最下要素まで移動する
+          element = element.children[0];
+        }
+
+        headingText = element.innerHTML;
         break;
       }
     }
