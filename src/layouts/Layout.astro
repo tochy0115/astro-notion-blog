@@ -147,6 +147,7 @@ if (database.Icon && database.Icon.Type === 'file') {
 
         <aside>
           <SearchButton />
+          <hr class="divider" />
           <slot name="aside" />
         </aside>
       </div>
@@ -271,6 +272,11 @@ if (database.Icon && database.Icon.Type === 'file') {
   main footer a {
     color: inherit;
     text-decoration: underline;
+  }
+
+  .divider {
+    margin: 1rem 0;
+    background-color: #dedede;
   }
 </style>
 

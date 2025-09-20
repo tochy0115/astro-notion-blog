@@ -2,21 +2,33 @@
 import { Post } from '../lib/interfaces.ts'
 import { getNavLink, getPostLink } from '../lib/blog-helpers.ts'
 import PostTags from './PostTags.astro'
+import BlogPostsLink from '../components/BlogPostsLink.astro'
 
 export interface Props {
+  samePost: Post[]
   prevPost: Post
   nextPost: Post
 }
 
-const { prevPost, nextPost } = Astro.props
+const { samePost, prevPost, nextPost } = Astro.props
 ---
 
 <div class="post-relative-link">
   <div>
+    {  
+      <div class="colored">
+        <BlogPostsLink
+          heading="同じカテゴリの記事"
+          posts={samePost}
+        />
+      </div>
+    }
+  </div>
+  <div>
     {
       nextPost && (
         <a href={getPostLink(nextPost.Slug)} class="colored">
-          <div>◀︎ Next</div>
+          <div>◀︎ 次の記事</div>
           <div>{nextPost.Title}</div>
           <PostTags post={nextPost} enableLink={false} />
         </a>
@@ -27,7 +39,7 @@ const { prevPost, nextPost } = Astro.props
     {
       prevPost && (
         <a href={getPostLink(prevPost.Slug)} class="colored">
-          <div>▶︎ Previous</div>
+          <div>　 前の記事 ▶︎</div>
           <div>{prevPost.Title}</div>
           <PostTags post={prevPost} enableLink={false} />
         </a>
@@ -35,7 +47,7 @@ const { prevPost, nextPost } = Astro.props
     }
   </div>
   <div>
-    <a href={getNavLink('/')} class="text">↑Top</a>
+    <a href={getNavLink('/')} class="text">トップの戻る</a>
   </div>
 </div>
 
@@ -60,6 +72,12 @@ const { prevPost, nextPost } = Astro.props
     font-size: 1rem;
     text-decoration: underline;
     font-weight: 500;
+  }
+  div.post-relative-link > div > div.colored {
+    padding: 1rem;
+    border-radius: var(--radius);
+    color: var(--fg);
+    background: rgba(227, 226, 224, 0.5);
   }
   div.post-relative-link > div > a.colored {
     padding: 1rem;

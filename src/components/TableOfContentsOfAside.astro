@@ -17,20 +17,22 @@ const { headings } = Astro.props
       const heading =
         headingBlock.Heading1 || headingBlock.Heading2 || headingBlock.Heading3
 
-      let indentClass = ''
+      let indentClass = '';
+      let leftbottom = '';
       if (headingBlock.Type === 'heading_2') {
-        indentClass = 'indent-1'
+        indentClass = 'indent-1';
+        leftbottom = '└ ';
       } else if (headingBlock.Type === 'heading_3') {
-        indentClass = 'indent-2'
+        indentClass = 'indent-2';
+        leftbottom = '└ ';
       }
 
       return (
         <a
           href={`#${buildHeadingId(heading)}`}
           class={`table-of-content-aside ${indentClass}`}>
-          {heading.RichTexts.map(
-            (richText: interfaces.RichText) => richText.PlainText
-          ).join('').trim()}
+          {leftbottom + 
+            heading.RichTexts.map((richText: interfaces.RichText) => richText.PlainText).join('').trim()}
         </a>
       )
     })
@@ -140,10 +142,10 @@ const { headings } = Astro.props
     line-height: 1.8rem;
     font-size: 0.9rem;
     font-weight: 500;
-    text-decoration: underline;
+    text-decoration: none;
   }
   .table-of-contents-aside > a:hover {
-    background: rgba(241, 241, 239, 1) !important;
+    background: #f5deb3 !important;
   }
   .table-of-contents-aside > a.indent-1 {
     padding-left: 1.5rem;
