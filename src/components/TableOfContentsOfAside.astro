@@ -143,6 +143,12 @@ const { headings } = Astro.props
     font-size: 0.9rem;
     font-weight: 500;
     text-decoration: none;
+
+    /* はみだしたテキストを省略表示する */
+    white-space: nowrap;        /* 折り返しを防ぐ */
+    overflow: hidden;           /* はみ出した部分を隠す */
+    text-overflow: ellipsis;
+    width: 100%;
   }
   .table-of-contents-aside > a:hover {
     background: #f5deb3 !important;
